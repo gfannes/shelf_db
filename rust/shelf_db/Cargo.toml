@@ -1,0 +1,5 @@
+[package]
+
+name = "shelf"
+version = "0.0.1"
+authors = ["Geert Fannes <geert.fannes@gmail.com>"]
