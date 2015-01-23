@@ -1,5 +1,8 @@
+extern crate rustc;
+
 use std::io::{File, FilePermission, fs};
 use std::result::Result;
+use rustc::util::sha2::{Sha256, Digest};
 
 pub struct Error
 {
@@ -20,6 +23,9 @@ impl DB
 	pub fn put(&self, key: &str, value: &str) -> Result<(), Error>
 	{
 		self.create_root_path_();
+		let mut digest = Sha256::new();
+		digest.input_str(key);
+		println!("{:?}", digest.result_str());
 		let filename = self.path.join(key);
 		match File::create(&filename).write(value.as_bytes())
 		{
