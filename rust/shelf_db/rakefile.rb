@@ -3,7 +3,7 @@ task :build do ||
 end
 	
 task :test => [:build, :clean_test_junk] do ||
-	sh "cargo test"
+	sh "cargo test -- --nocapture"
 end
 
 task :clean_test_junk do ||

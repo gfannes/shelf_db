@@ -22,20 +22,26 @@ impl DB
 	}
 	pub fn put(&self, key: &str, value: &str) -> Result<(), Error>
 	{
-		self.create_root_path_();
 		let mut digest = Sha256::new();
 		digest.input_str(key);
-		println!("{:?}", digest.result_str());
-		let filename = self.path.join(key);
-		match File::create(&filename).write(value.as_bytes())
+		let dir = self.create_path_(digest.result_str());
+		match File::create(&dir.join("key")).write(key.as_bytes())
 		{
-			Err(err) => Err(Error{desc: err.desc}),
-			_ => Ok(()),
-		}
+			Err(err) => return Err(Error{desc: err.desc}),
+			_ => (),
+		};
+		match File::create(&dir.join("value")).write(value.as_bytes())
+		{
+			Err(err) => return Err(Error{desc: err.desc}),
+			_ => (),
+		};
+		Ok(())
 	}
 
-	fn create_root_path_(&self)
+	fn create_path_(&self, digest: String) -> Path
 	{
-		fs::mkdir_recursive(&self.path, FilePermission::all());
+		let dir = self.path.join(digest);
+		fs::mkdir_recursive(&dir, FilePermission::all());
+		dir
 	}
 }
